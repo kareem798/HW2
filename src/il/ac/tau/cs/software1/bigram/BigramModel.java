@@ -21,16 +21,16 @@ public class BigramModel {
         mBigramCounts = buildCountsArray(fileName, mVocabulary);
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // Helper methods - already implemented for you. Use them!
-    ///////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
     /*
      * Converts a single token (a whitespace-free piece of text from the file)
      * into the form in which it is stored in the vocabulary:
-     *   - a token with at least one English letter  -> the token in lowercase
-     *   - a token made only of digits (an integer)  -> SOME_NUM
-     *   - anything else is not a legal word         -> null
+     * - a token with at least one English letter -> the token in lowercase
+     * - a token made only of digits (an integer) -> SOME_NUM
+     * - anything else is not a legal word -> null
      *
      * @pre: token != null
      */
@@ -57,6 +57,7 @@ public class BigramModel {
 
     /*
      * @pre: vocabulary != null
+     * 
      * @post: $ret = the index of word in vocabulary, or ELEMENT_NOT_FOUND if
      * word is null or does not appear in it
      */
@@ -72,57 +73,76 @@ public class BigramModel {
         return ELEMENT_NOT_FOUND;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // Questions 1 - 5: implement these
-    ///////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
     /*
      * @post: mVocabulary = prev(mVocabulary)
+     * 
      * @post: mBigramCounts = prev(mBigramCounts)
      */
     public String[] buildVocabularyIndex(String fileName) throws IOException {
-            String[] vocabulary = new String[MAX_VOCABULARY_SIZE];
-            int count=0;
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = reader.readLine()) != null) {          
-                String[] tokens = line.trim().split("\\s+");
+        String[] vocabulary = new String[MAX_VOCABULARY_SIZE];
+        int count = 0;
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] tokens = line.trim().split("\\s+");
 
-                for (int i = 0; i < tokens.length; i++) {         
-                String word =normalizeWord(tokens[i]);
+            for (int i = 0; i < tokens.length; i++) {
+                String word = normalizeWord(tokens[i]);
 
-                if (word != null && count<MAX_VOCABULARY_SIZE ) {
-                    if(findIndex(vocabulary, word)== ELEMENT_NOT_FOUND){
-                        
-                            vocabulary[count]=word;
-                            count++;
-                        }
+                if (word != null && count < MAX_VOCABULARY_SIZE) {
+                    if (findIndex(vocabulary, word) == ELEMENT_NOT_FOUND) {
+
+                        vocabulary[count] = word;
+                        count++;
                     }
                 }
-            }     
-            reader.close(); 
-            if(count!=MAX_VOCABULARY_SIZE){
-                String[] resvocabulary = new String[count];
-                for (int i = 0; i < count; i++) {
-                resvocabulary[i] = vocabulary[i];
-                
-                    }
-                    return resvocabulary;
-                } 
-            return vocabulary;
+            }
         }
+        reader.close();
+        if (count != MAX_VOCABULARY_SIZE) {
+            String[] resvocabulary = new String[count];
+            for (int i = 0; i < count; i++) {
+                resvocabulary[i] = vocabulary[i];
+
+            }
+            return resvocabulary;
+        }
+        return vocabulary;
+    }
 
     /*
      * @post: mVocabulary = prev(mVocabulary)
+     * 
      * @post: mBigramCounts = prev(mBigramCounts)
      */
-    public int[][] buildCountsArray(String fileName, String[] vocabulary) throws IOException { // Question 2
-        // TODO: implement
-        return null;
+    public int[][] buildCountsArray(String fileName, String[] vocabulary) throws IOException {
+        int[][] counts = new int[vocabulary.length][vocabulary.length];
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] tokens = line.trim().split("\\s+");
+
+            for (int i = 0; i < tokens.length - 1; i++) {
+                String word1 = normalizeWord(tokens[i]);
+                String word2 = normalizeWord(tokens[i + 1]);
+                int index1 = findIndex(vocabulary, word1);
+                int index2 = findIndex(vocabulary, word2);
+                if (index1 != ELEMENT_NOT_FOUND && index2 != ELEMENT_NOT_FOUND)
+                    counts[index1][index2]++;
+
+            }
+        }
+        reader.close();
+        return counts;
     }
 
     /*
      * @pre: the method initModel was called (the language model is initialized)
+     * 
      * @pre: fileName is a legal file path
      */
     public void saveModel(String fileName) throws IOException { // Question 3
@@ -138,24 +158,31 @@ public class BigramModel {
 
     /*
      * @pre: sentence is in lowercase
+     * 
      * @pre: the method initModel was called (the language model is initialized)
+     * 
      * @pre: each two words in the sentence are separated with a single space
-     * @post: if sentence is probable, according to the model, $ret = true, else, $ret = false
+     * 
+     * @post: if sentence is probable, according to the model, $ret = true, else,
+     * $ret = false
      */
     public boolean isLegalSentence(String sentence) { // Question 5
         // TODO: implement
         return false;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // Queries on the model - already implemented for you.
     // They start working once Questions 1 - 2 are done.
-    ///////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
     /*
      * @pre: word is in lowercase
+     * 
      * @pre: the method initModel was called (the language model is initialized)
-     * @post: $ret = -1 if word is not in vocabulary, otherwise $ret = the index of word in vocabulary
+     * 
+     * @post: $ret = -1 if word is not in vocabulary, otherwise $ret = the index of
+     * word in vocabulary
      */
     public int getWordIndex(String word) {
         return findIndex(mVocabulary, word);
@@ -163,8 +190,11 @@ public class BigramModel {
 
     /*
      * @pre: word1, word2 are in lowercase
+     * 
      * @pre: the method initModel was called (the language model is initialized)
-     * @post: $ret = the count for the bigram <word1, word2>. if one of the words does not
+     * 
+     * @post: $ret = the count for the bigram <word1, word2>. if one of the words
+     * does not
      * exist in the vocabulary, $ret = 0
      */
     public int getBigramCount(String word1, String word2) {
@@ -178,8 +208,11 @@ public class BigramModel {
 
     /*
      * @pre: word is in lowercase, and is in mVocabulary
+     * 
      * @pre: the method initModel was called (the language model is initialized)
-     * @post: $ret = the word with the lowest vocabulary index that appears most frequently after word
+     * 
+     * @post: $ret = the word with the lowest vocabulary index that appears most
+     * frequently after word
      * (if a bigram starting with word was never seen, $ret will be null)
      */
     public String getMostFrequentProceeding(String word) {
@@ -195,7 +228,9 @@ public class BigramModel {
 
     /*
      * @pre: arr1.length = arr2.length
-     * @post: if arr1 or arr2 are only filled with zeros, $ret = -1, otherwise calculates CosineSim
+     * 
+     * @post: if arr1 or arr2 are only filled with zeros, $ret = -1, otherwise
+     * calculates CosineSim
      */
     public static double calcCosineSim(int[] arr1, int[] arr2) {
         double dot = 0;
@@ -214,8 +249,11 @@ public class BigramModel {
 
     /*
      * @pre: word is in vocabulary
+     * 
      * @pre: the method initModel was called (the language model is initialized)
-     * @post: $ret = w implies that w is the word with the largest cosineSimilarity(vector for word, vector for w)
+     * 
+     * @post: $ret = w implies that w is the word with the largest
+     * cosineSimilarity(vector for word, vector for w)
      * among all the other words in vocabulary (the lowest index wins a tie)
      */
     public String getClosestWord(String word) {
