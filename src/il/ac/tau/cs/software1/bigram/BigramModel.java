@@ -1,7 +1,9 @@
 package il.ac.tau.cs.software1.bigram;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -21,9 +23,9 @@ public class BigramModel {
         mBigramCounts = buildCountsArray(fileName, mVocabulary);
     }
 
-    /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     // Helper methods - already implemented for you. Use them!
-    /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
 
     /*
      * Converts a single token (a whitespace-free piece of text from the file)
@@ -73,9 +75,9 @@ public class BigramModel {
         return ELEMENT_NOT_FOUND;
     }
 
-    /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     // Questions 1 - 5: implement these
-    /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
 
     /*
      * @post: mVocabulary = prev(mVocabulary)
@@ -145,8 +147,29 @@ public class BigramModel {
      * 
      * @pre: fileName is a legal file path
      */
-    public void saveModel(String fileName) throws IOException { // Question 3
-        // TODO: implement
+    public void saveModel(String fileName) throws IOException {
+        int len = mVocabulary.length;
+        String vocPath = fileName + VOC_FILE_SUFFIX;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(vocPath));
+        writer.write(len + " words");
+        writer.write("\n");
+        for (int i = 0; i < len; i++) {
+            writer.write(i + "," + mVocabulary[i]);
+            writer.write("\n");
+        }
+        writer.close();
+        String countPath = fileName + COUNTS_FILE_SUFFIX;
+        BufferedWriter writer2 = new BufferedWriter(new FileWriter(countPath));
+        for (int i = 0; i < mBigramCounts.length; i++) {
+            for (int j = 0; j < mBigramCounts.length; j++) {
+                if (mBigramCounts[i][j] != 0) {
+                    writer2.write(i + "," + j + ":" + mBigramCounts[i][j]);
+                    writer2.write("\n");
+                }
+            }
+
+        }
+        writer2.close();
     }
 
     /*
@@ -171,10 +194,10 @@ public class BigramModel {
         return false;
     }
 
-    /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     // Queries on the model - already implemented for you.
     // They start working once Questions 1 - 2 are done.
-    /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
 
     /*
      * @pre: word is in lowercase
