@@ -23,9 +23,9 @@ public class BigramModel {
         mBigramCounts = buildCountsArray(fileName, mVocabulary);
     }
 
-    ///////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
     // Helper methods - already implemented for you. Use them!
-    ///////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
 
     /*
      * Converts a single token (a whitespace-free piece of text from the file)
@@ -75,9 +75,9 @@ public class BigramModel {
         return ELEMENT_NOT_FOUND;
     }
 
-    ///////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
     // Questions 1 - 5: implement these
-    ///////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
 
     /*
      * @post: mVocabulary = prev(mVocabulary)
@@ -212,14 +212,36 @@ public class BigramModel {
      * $ret = false
      */
     public boolean isLegalSentence(String sentence) { // Question 5
-        // TODO: implement
-        return false;
+        if (sentence.isEmpty()) {
+            return true;
+        }
+
+        String[] words = sentence.split(" ");
+
+        // מקרה 2: מילה אחת
+        if (words.length == 1) {
+            return findIndex(mVocabulary, words[0]) != ELEMENT_NOT_FOUND;
+        }
+
+        
+        for (int i = 0; i < words.length - 1; i++) {
+            int firstIndex = findIndex(mVocabulary, words[i]);
+            int secondIndex = findIndex(mVocabulary, words[i + 1]);
+
+            if (firstIndex == ELEMENT_NOT_FOUND || secondIndex == ELEMENT_NOT_FOUND) {
+                return false;
+            }
+            if (mBigramCounts[firstIndex][secondIndex] == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    ///////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
     // Queries on the model - already implemented for you.
     // They start working once Questions 1 - 2 are done.
-    ///////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
 
     /*
      * @pre: word is in lowercase
