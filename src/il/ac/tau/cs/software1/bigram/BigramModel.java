@@ -23,9 +23,9 @@ public class BigramModel {
         mBigramCounts = buildCountsArray(fileName, mVocabulary);
     }
 
-    /////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
     // Helper methods - already implemented for you. Use them!
-    /////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
 
     /*
      * Converts a single token (a whitespace-free piece of text from the file)
@@ -75,9 +75,9 @@ public class BigramModel {
         return ELEMENT_NOT_FOUND;
     }
 
-    /////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
     // Questions 1 - 5: implement these
-    /////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
 
     /*
      * @post: mVocabulary = prev(mVocabulary)
@@ -176,7 +176,29 @@ public class BigramModel {
      * @pre: fileName is a legal file path
      */
     public void loadModel(String fileName) throws IOException { // Question 4
-        // TODO: implement
+        String vocPath = fileName + VOC_FILE_SUFFIX;
+        BufferedReader reader = new BufferedReader(new FileReader(vocPath));
+        String line = reader.readLine();
+        int n = Integer.parseInt(line.split(" ")[0]); // המספר 5
+        String[] vocabulary = new String[n];
+        while ((line = reader.readLine()) != null) {
+            String[] lStrings = line.split(",", 2);
+            vocabulary[Integer.parseInt(lStrings[0])] = lStrings[1];
+
+        }
+        reader.close();
+
+        BufferedReader reader2 = new BufferedReader(new FileReader(fileName + COUNTS_FILE_SUFFIX));
+        int[][] bigramCounts = new int[n][n];
+        while ((line = reader2.readLine()) != null) {
+            String[] lStrings = line.split(":");
+            String[] index = lStrings[0].split(",");
+            bigramCounts[Integer.parseInt(index[0])][Integer.parseInt(index[1])] = Integer.parseInt(lStrings[1]);
+
+        }
+        reader2.close();
+        mVocabulary = vocabulary;
+        mBigramCounts = bigramCounts;
     }
 
     /*
@@ -194,10 +216,10 @@ public class BigramModel {
         return false;
     }
 
-    /////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
     // Queries on the model - already implemented for you.
     // They start working once Questions 1 - 2 are done.
-    /////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
 
     /*
      * @pre: word is in lowercase
