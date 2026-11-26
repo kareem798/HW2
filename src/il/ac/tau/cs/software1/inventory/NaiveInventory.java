@@ -17,8 +17,12 @@ public class NaiveInventory implements Inventory {
 
 	@Override
 	public void collect(Collectible collectible) {
-		if(collectibles.length == INITIAL_CAPACITY) {
-			
+		if(collectCount == collectibles.length) {
+			Collectible[] newCollectibles = new Collectible[collectibles.length * 2];
+			for(int i = 0; i < collectibles.length; i++) {
+				newCollectibles[i] = collectibles[i];
+			}
+			collectibles = newCollectibles;
 		}
 		collectibles[collectCount] = collectible;
 		collectCount++;
@@ -26,19 +30,22 @@ public class NaiveInventory implements Inventory {
 
 	@Override
 	public float getTotalWeight() {
-		// TODO: implement
-		return 0.f;
+		float totalWeight = 0.f;
+		for(int i = 0; i < collectCount; i++) {
+			totalWeight += collectibles[i].getWeight();
+		}
+		return totalWeight;
 	}
 
 	@Override
 	public int getCurrentCount() {
-		// TODO: implement
-		return 0;
+		
+		return collectCount;
 	}
 
-	// Returns the array of Collectibles that is stored in the field of this class
+	
 	public Collectible[] getCollArr() {
-		// TODO: implement
-		return null;
+		
+		return collectibles;
 	}
 }
