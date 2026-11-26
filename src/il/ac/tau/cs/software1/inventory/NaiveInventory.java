@@ -7,17 +7,21 @@ public class NaiveInventory implements Inventory {
 
 	private static final int INITIAL_CAPACITY = 100;
 
-	// TODO: add the fields:
-	//       - an array of Collectibles (it may be larger than the number of items actually stored)
-	//       - an int that counts how many items are actually stored
+	private Collectible[] collectibles;
+	private int collectCount;
 
 	public NaiveInventory() {
-		// TODO: implement
+		this.collectibles = new Collectible[INITIAL_CAPACITY];
+		collectCount = 0;
 	}
 
 	@Override
 	public void collect(Collectible collectible) {
-		// TODO: implement
+		if(collectibles.length == INITIAL_CAPACITY) {
+			
+		}
+		collectibles[collectCount] = collectible;
+		collectCount++;
 	}
 
 	@Override
